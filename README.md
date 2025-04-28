@@ -1,4 +1,4 @@
-# RooLLM
+# RooLLM(MS Teams edition)
 
 Provide an AI assistant in Teams
 
