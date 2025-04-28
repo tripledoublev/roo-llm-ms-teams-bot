@@ -100,6 +100,11 @@ server.post('/api/messages', async (req, res) => {
     const userId = context.activity.from.id
     const userMessage = context.activity.text
 
+    // Skip if no message or if it's not a message activity
+    if (!userMessage || context.activity.type !== 'message') {
+      return;
+    }
+
     // Initialize session ID if it doesn't exist
     if (!sessionIds[userId]) {
       sessionIds[userId] = uuidv4() // Generate a unique session ID
@@ -119,28 +124,36 @@ server.post('/api/messages', async (req, res) => {
       // Send the request to the RooLLM server
       const response = await axios.post('http://127.0.0.1:8000/chat', {
         message: userMessage,
-        session_id: sessionId,
-        history: conversationHistory[sessionId]
+        session_id: sessionId
       }, {
         responseType: 'stream' // Handle streaming response
       })
 
       // Process the streamed response
       let botReply = ''
-      response.data.on('data', (chunk) => {
-        const data = JSON.parse(chunk.toString().replace(/^data: /, '').trim())
-        if (data.type === 'reply') {
-          botReply += data.content
-        }
+      
+      // Create a promise to handle the stream
+      await new Promise((resolve, reject) => {
+        response.data.on('data', (chunk) => {
+          try {
+            const data = JSON.parse(chunk.toString().replace(/^data: /, '').trim())
+            if (data.type === 'reply') {
+              botReply += data.content
+            }
+          } catch (error) {
+            console.error('Error parsing chunk:', error)
+          }
+        })
+
+        response.data.on('end', () => resolve())
+        response.data.on('error', (error) => reject(error))
       })
 
-      response.data.on('end', async () => {
-        // Add the bot's reply to the history
-        conversationHistory[sessionId].push({ role: 'assistant', content: botReply })
+      // Add the bot's reply to the history
+      conversationHistory[sessionId].push({ role: 'assistant', content: botReply })
 
-        // Send the bot's reply to the user
-        await context.sendActivity(botReply)
-      })
+      // Send the bot's reply to the user
+      await context.sendActivity(botReply)
     } catch (error) {
       console.error('Error communicating with RooLLM:', error)
       await context.sendActivity('Sorry, there was an error processing your request.')
