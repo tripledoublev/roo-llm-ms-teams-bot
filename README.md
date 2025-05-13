@@ -1,6 +1,6 @@
-# RooLLM(MS Teams edition)
+# RooLLM (MS Teams edition)
 
-Provide an AI assistant in Teams
+This project extends [RooLLM](https://github.com/hyphacoop/RooLLM) and bridges it to Microsoft Teams.
 
 This bot has been created using [Bot Framework](https://dev.botframework.com), it shows how to create a simple bot that accepts input from the user and echoes it back.
 
