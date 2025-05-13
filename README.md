@@ -2,7 +2,7 @@
 
 This project extends [RooLLM](https://github.com/hyphacoop/RooLLM) and bridges it to Microsoft Teams.
 
-This bot has been created using [Bot Framework](https://dev.botframework.com), it shows how to create a simple bot that accepts input from the user and echoes it back.
+This bot has been created using [Bot Framework](https://dev.botframework.com), it shows how to create a simple bot that leverages the existing RooLLM codebase and uses the Bot Framework to bring Roo into a new chat client.
 
 ## Prerequisites
 
@@ -13,6 +13,14 @@ This bot has been created using [Bot Framework](https://dev.botframework.com), i
     node --version
     ```
 
+- Clone this repo
+  `git clone https://github.com/tripledoublev/roo-llm-ms-teams-bot.git`
+- Navigate to this repo
+  `cd roo-llm-ms-teams-bot`
+- Clone RooLLM
+  `git clone https://github.com/hyphacoop/RooLLM.git`
+
+  
 ## To run the bot
 
 - Install modules
